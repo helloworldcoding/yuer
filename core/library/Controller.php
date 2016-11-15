@@ -1,7 +1,6 @@
 <?php
 namespace core\library;
 
-use core\library\router;
 
 /**
  * 控制器基类
@@ -15,10 +14,8 @@ class Controller
     public $arr = [];
     public function __construct()
     {
-        router::route();
-        $this->module     = router::$module;
-        $this->controller = router::$controller;
-        $this->action     = router::$action;
+        $this->view       = new View();
+        $this->model      = new Model();
     }
     /**
      * 传递变量
@@ -30,15 +27,7 @@ class Controller
      */
     public function assign($name = '' ,$value = null)
     {
-        // 支持传递当个变量的操作
-        if(is_array($name))
-        {
-            $this->arr = array_merge($this->arr,$name);
-        }
-        else
-        {
-            $this->arr[$name] = $value;
-        }
+        $this->view->assign($name,$value);
     }
 
     /**
@@ -50,18 +39,6 @@ class Controller
      */
     public function display($file = '')
     {
-        $file = empty($file) ? $this->action : $file;
-        if(empty($this->module))
-        {
-            $filePath = APP_PATH.'view'.DIRECTORY_SEPARATOR.$this->controller.DIRECTORY_SEPARATOR.$file.'.html';
-        }
-        else
-        {
-            $filePath = APP_PATH.$this->module.DIRECTORY_SEPARATOR.'view'.DIRECTORY_SEPARATOR.$this->controller.DIRECTORY_SEPARATOR.$file.'.html';
-        }
-        extract($this->arr);
-        include_once($filePath);
+        $this->view->display($file);
     }
-
-
 }
